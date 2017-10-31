@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Salon Scheduling</title>
+
+	<script src="https://code.jquery.com/jquery-1.11.0.js"></script>
+	<script>
+		$(document).ready(function()
+		{
+			
+			//These variables identify the dropdown boxes
+			var formService = $("#formService");
+			var formStylist = $("#formStylist");
+			var formDate = $("#formDate");
+			var formColorist =$("#formColorist");
+			
+			document.getElementById("formColorist").selectedIndex = 0;
+			formColorist.prop('disabled', false);
+			
+			$.ajax({url:'getColorist.php', type:'GET'});
+			
+			
+		});
+	</script>
+</head>
+
+<body>
+	<?php
+		//Establish connection with mySQL server with credentials found in config.php
+		require "../config.php";
+		require "../common.php";
+
+		$connection = new PDO($dsn, $username, $password, $options);
+	?>
+
+	<h1>Salon Database</h1>
+	<h2>Add a Value</h2>
+	
+	<form method="post">
+		<!-- Name entry -->
+		<label for="name">Name:</label>
+		<input type="text" name="first_name" id="first_name">
+		<input type="text" name="last_name" id="last_name">
+		<br><br>
+		
+		<!-- Email entry -->
+		<label for="email">Email:</label>
+		<input type="text" name="email" id="email">
+		<br><br>
+		
+		<!-- Phone entry -->
+		<label for="phone">Phone:</label>
+		<input type="text" name="phone" id="phone">
+		<br><br>
+		
+		<!-- Colorist dropdown box -->
+		<label for="colorist">Colorist:</label>
+		<select name="formColorist" select id="formColorist">
+			<option value="" selected="selected" disabled="disabled">Select a Colorist</option>
+			<!-- Colorist pulled from the database go here -->
+			
+		</select>
+		<br><br>
+		
+		
+		<input type="submit" name="submit" value="Enter">
+		<br><br>
+		
+		<p id="result"><p>
+	</form>
+	
+	<?php include 'insert.php'; ?>
+	
+</body>
+</html>
