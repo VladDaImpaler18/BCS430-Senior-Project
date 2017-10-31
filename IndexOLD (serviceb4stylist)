@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Salon Scheduling</title>
+
+	<script src="https://code.jquery.com/jquery-1.11.0.js"></script>
+	<script>
+		$(document).ready(function()
+		{
+			//These variables identify the dropdown boxes
+			var formService = $("#formService");
+			var formStylist = $("#formStylist");
+			var formDate = $("#formDate");
+			
+			formService.change(function()
+			{
+				//Enable stylist box on service dropdown selection and disable date box
+				formStylist.prop('disabled', false);
+				document.getElementById("formStylist").selectedIndex = 0;
+				formDate.prop('disabled', true);
+				
+				//Get value of currently selected dropdown box option
+				var elem = document.getElementById("formService");
+				var selected_service = elem.options[elem.selectedIndex].value;
+				
+				$.ajax
+				({
+					url: 'getStylists.php',
+					type: 'GET',
+					data: { service: selected_service },
+					success: function(data)
+					{
+					 formStylist.html(data);
+					},
+					error: function(XMLHttpRequest, textStatus, errorThrown)
+					{
+					  //case error
+					}
+				 });
+			});
+			
+			formStylist.change(function()
+			{
+				//Enable date box on stylist dropdown selection
+				formDate.prop('disabled', false);
+				document.getElementById("formDate").selectedIndex = 0;
+			});
+		});
+	</script>
+</head>
+
+<body>
+	<?php
+		//Establish connection with mySQL server with credentials found in config.php
+		require "../config.php";
+		require "../common.php";
+
+		$connection = new PDO($dsn, $username, $password, $options);
+	?>
+
+	<h1>Salon Database</h1>
+	<h2>Add a Value</h2>
+	
+	<form method="post">
+		<!-- Name entry -->
+		<label for="name">Name:</label>
+		<input type="text" name="first_name" id="first_name">
+		<input type="text" name="last_name" id="last_name">
+		<br><br>
+		
+		<!-- Email entry -->
+		<label for="email">Email:</label>
+		<input type="text" name="email" id="email">
+		<br><br>
+		
+		<!-- Phone entry -->
+		<label for="phone">Phone:</label>
+		<input type="text" name="phone" id="phone">
+		<br><br>
+		
+		<!-- Service dropdown box -->
+		<label for="service">Service:</label>
+		<select name="formService" id="formService">
+			<option value="" selected="selected" disabled="disabled">Select a Service</option>
+			<option value="blowout">Blowout - $35</option>
+			<option value="haircut">Women's Haircut - $35</option>
+			<option value="haircut_blowout">Women's Haircut and Blowout - $55</option>
+			<option value="haircut">Men's Haircut - $30</option>
+			<option value="straightening">Straightening - $200</option>
+			<option value="perm">Perm - $200</option>
+			<option value="single_process">Single Process - $70</option>
+			<option value="double_process">Double Process - $80</option>
+			<option value="half_head_highlight">Half Head Highlights - $125</option>
+			<option value="full_head_highlight">Full Head Highlights - $175</option>
+			<option value="semi_perminate">Semi Perminate - $65</option>
+			<option value="mini_lift">Mini Lift - $60</option>
+			<option value="hair_line">Hair Line - $45</option>
+			<option value="glaze">Glaze - $30</option>
+			<option value="balayage">Balayage - $135</option>
+			<option value="low_lights">Low Lights - $80</option>
+		</select>
+		<br><br>
+		
+		<!-- Stylist dropdown box -->
+		<label for="stylist">Stylist:</label>
+		<select name="formStylist" select id="formStylist" disabled="disabled">
+			<option value="" selected="selected" disabled="disabled">Select a Stylist</option>
+			<!-- Stylists pulled from the database go here -->
+			
+		</select>
+		<br><br>
+		
+		<!-- Date dropdown box -->
+		<label for="date">Date:</label>
+		<select name="formDate" select id="formDate" disabled="disabled">
+			<option value="" selected="selected" disabled="disabled">Select a Date</option>
+			<!-- getDate is empty currently -->
+			<?php include 'getDate.php'; ?>
+		</select>
+		<br><br>
+		
+		<input type="submit" name="submit" value="Enter">
+		<br><br>
+		
+		<p id="result"><p>
+	</form>
+	
+	<?php include 'insert.php'; ?>
+	
+</body>
+</html>
